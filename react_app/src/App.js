@@ -1,28 +1,42 @@
 import React, { Component } from 'react';
+// import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import styled from "styled-components";
+
 import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
+  contructor(props) {
+    // super(props);
+    this.state = {
+      games: []
+    }
+  }
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
+        <sideBar>
           <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+            Apps/games
+              </p>
+        </sideBar>
+        <div className="theGame">
+          The SCREEN for the game
+          </div>
+
       </div>
     );
   }
 }
 
 export default App;
+
+const sideBar = styled.div`
+  width: 50px;
+  height: 50px;
+  posision: relative;
+  &:hover{
+    background-color: gray; 
+  }
+
+`;
