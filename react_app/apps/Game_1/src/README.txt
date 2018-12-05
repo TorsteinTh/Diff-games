@@ -1,27 +1,73 @@
-README 
-Meyham clone
+READ ME FILE
 
-
-Please enter    $python3 main.py       to start the game
-                ----------------
---------------------------------------------------------
+This is for the breakout game
 
 
 
-Player one           Player Two          Action
----------------------------------------------------------
-UP    - arrow          'w'               Engine
-LEFT  - arrow          'a'               Rotate left  
-RIGHT - arrow          'd'               Rotate Right
-DOWN  - arrow          'spacebar'        Fire shots
-
-'r'                    'r'               Restart
-Esc                    Esc               Exit
 
 
----------------------------------------------------------
-Tip: Don't die 
----------------------------------------------------------
+
+To start the program, enter 'python3 main.py' in the terminal
 
 
-Enjoy!
+
+A new window called 'Breakout' will apper on your screen.
+
+
+
+The game will start in a start-meny where instruction will be given
+
+
+
+
+
+
+
+
+
+
+Your key options:
+
+
+Press 'SPACEBAR'    to start    the game
+
+Press 'r'           to restart  the game
+
+Press 'q' or 'Esc'  to quit     the game
+
+Press 'y'           to autowin  the game
+
+
+
+Press 'RIGHT-KEY' and 'LEFT-KEY' to move the player
+
+
+
+
+
+
+
+
+
+
+
+The game is won then there is no more boxes 
+
+
+
+When you win the game, you have the options to either exit the game or to play again
+
+
+
+
+When you lose the game or exit, the window will be closed 
+
+
+
+
+
+
+
+
+
+Enjoy the Breakout game :) 
