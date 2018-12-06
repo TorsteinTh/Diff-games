@@ -175,9 +175,10 @@ if __name__ == "__main__":
         if ball.pos.y > screen_dim[1] or ball.pos.y < 0:
             ball.speed.y *= -1
 
-        if ball.pos.y > screen_dim[1]:                                      #loses when the ball hits the floor
+        if ball.pos.y >= screen_dim[1]:                                      #loses when the ball hits the floor
+            ball.speed.y *= -1
             print("You lost!")
-            quit()                                      
+            # quit()                                      
         
         if k_right and player.pos.x + player.dim[0] < screen_dim[0]:        #controls the player, and limits to move it more than the screen
             player.moveright()
