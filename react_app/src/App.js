@@ -1,42 +1,47 @@
 import React, { Component } from 'react';
 // import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import styled from "styled-components";
+import Game_1 from "./Game_1/src/App.js"
+// import Game2 from "./../apps/Game_2/src/App.js"
+import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap"
+import { BrowserRouter, Route, Switch } from "react-router-dom"
+import Home from "./components/Home.js"
+import NavbarGames from "./components/Navbar.js"
 
-import logo from './logo.svg';
-import './App.css';
+
 
 class App extends Component {
   contructor(props) {
-    // super(props);
-    this.state = {
-      games: []
-    }
   }
+
   render() {
     return (
-      <div className="App">
-        <sideBar>
-          <p>
-            Apps/games
-              </p>
-        </sideBar>
-        <div className="theGame">
-          The SCREEN for the game
-          </div>
+      <BrowserRouter>
+        <div>
 
-      </div>
+          <NavbarGames />
+          <Switch>
+            <Route path="/" component={Home} exact></Route>
+            <Route path="/game_1" component={Game_1} ></Route>
+            {/* <Route path="/game_2" component={Game_2} ></Route> */}
+          </Switch>
+        </div>
+      </BrowserRouter >
     );
   }
 }
 
 export default App;
 
-const sideBar = styled.div`
-  width: 50px;
-  height: 50px;
-  posision: relative;
-  &:hover{
-    background-color: gray; 
-  }
 
+const ButtonContainer = styled.div`
+  position: relative;
+  border: 5px;
+  align-items: center;
+  &:hover{
+    background-color: green;
+  }
+  &:focus{
+    background-colorr:blue;
+  }
 `;
