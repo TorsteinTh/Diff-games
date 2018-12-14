@@ -6,7 +6,7 @@ import { BrowserRouter, Route, Switch, NavLink } from "react-router-dom"
 const NavbarGames = () => {
     return (
         <Navbar bg="light" expand="lg">
-            <Navbar.Brand href="#home">Games from INF-1400</Navbar.Brand>
+            <Navbar.Brand>Games from INF-1400</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="mr-auto">
@@ -19,4 +19,4 @@ const NavbarGames = () => {
     )
 }
 
-export default NavbarGames;
+export default NavbarGames; 

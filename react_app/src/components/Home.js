@@ -1,26 +1,40 @@
 import React, { Component } from "react"
 import styled from "styled-components"
 import { Button } from "react-bootstrap"
+import { Redirect } from "react-router-dom"
 
-const Home = () => {
-    return (
-        <div>
-            <sideBar>
-                <p>
-                    Apps/games
-                </p>
-            </sideBar >
-            <div className="Selection">
-                <p>
-                    Select your game
-                </p>
-                <Button bsStyle="info" style={{ border: 5 }}>Game 1</Button>
-                <Button bsStyle="info" style={{ border: 5 }}>Game 2</Button>
-                <Button bsStyle="info" style={{ border: 5 }}>Game 3</Button>
-            </div>
-        </div>
 
-    )
+class Home extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+
+        }
+        this.handleClick1 = this.handleClick1.bind()
+    }
+    handleClick1() {
+    }
+
+    render() {
+        return (
+            <div>
+                <sideBar>
+                    <p>
+                        Apps/games
+                </p>
+                </sideBar >
+                <div className="Selection">
+                    <p>
+                        Select your game
+                    </p>
+                    <Button bsStyle="info" onClick={this.handleClick1}>Game 1</Button>
+                    <Button bsStyle="info">Game 2</Button>
+                    <Button bsStyle="info">Game 3</Button>
+                </div>
+            </div >
+
+        )
+    }
 }
 export default Home;
 

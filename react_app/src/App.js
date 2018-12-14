@@ -7,11 +7,14 @@ import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap"
 import { BrowserRouter, Route, Switch } from "react-router-dom"
 import Home from "./components/Home.js"
 import NavbarGames from "./components/Navbar.js"
+import Fail from "./components/Fail.js"
 
 
 
 class App extends Component {
-  contructor(props) {
+  constructor(props) {
+    super(props)
+    this.state = {}
   }
 
   render() {
@@ -21,9 +24,10 @@ class App extends Component {
 
           <NavbarGames />
           <Switch>
-            <Route path="/" component={Home} exact></Route>
-            <Route path="/game_1" component={Game_1} ></Route>
             {/* <Route path="/game_2" component={Game_2} ></Route> */}
+            <Route path="/game_1" component={Game_1} ></Route>
+            <Route path="/" component={() => <Home />} exact></Route>
+            <Route component={() => <Fail />}></Route>
           </Switch>
         </div>
       </BrowserRouter >
@@ -32,16 +36,3 @@ class App extends Component {
 }
 
 export default App;
-
-
-const ButtonContainer = styled.div`
-  position: relative;
-  border: 5px;
-  align-items: center;
-  &:hover{
-    background-color: green;
-  }
-  &:focus{
-    background-colorr:blue;
-  }
-`;
