@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import styled from "styled-components"
 import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap"
 import { BrowserRouter, Route, Switch, NavLink } from "react-router-dom"
 
@@ -6,17 +7,16 @@ import { BrowserRouter, Route, Switch, NavLink } from "react-router-dom"
 const NavbarGames = () => {
     return (
         <Navbar bg="light" expand="lg">
-            <Navbar.Brand>Games from INF-1400</Navbar.Brand>
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
-                <Nav className="mr-auto">
-                    <NavLink to="/">Home</NavLink>
-                    <NavLink to="/game_1">Game 1</NavLink>
-                    <NavLink to="/game_2">Game 2</NavLink>
-                </Nav>
+            <a class="navbar-brand" href="/">Home</a>
+            <a class="navbar-brand" href="/game_1">Game 1</a>
+            <a class="navbar-brand" href="/game_2">Game 2</a>
+
             </Navbar.Collapse>
         </Navbar>
     )
 }
+
 
 export default NavbarGames; 
