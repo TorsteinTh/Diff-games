@@ -4,9 +4,9 @@ class Fail extends Component {
     render() {
         return (
             <div>
-                <p>
+                <h1>
                     404 NOT FOUND
-                </p>
+                </h1>
                 <p>
                     Sorry, this path is non existing
                 </p>

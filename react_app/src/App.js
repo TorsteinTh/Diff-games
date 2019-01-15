@@ -25,7 +25,6 @@ class App extends Component {
 
           <NavbarGames />
           <Switch>
-            {/* <Route path="/game_2" component={Game_2} ></Route> */}
             <Route path="/game_1" component={Game_1} ></Route>
             <Route path="/game_2" component={TypeRacer} ></Route>
             <Route path="/" component={() => <Home />} exact></Route>
