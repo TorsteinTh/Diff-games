@@ -15,7 +15,7 @@ class Home extends Component {
             <div>
                 <SideBar>
                     <h1>
-                        Welcome
+                        Welcome fuckface
                     </h1>
                 </SideBar >
             </div >
@@ -28,7 +28,7 @@ export default Home;
 const SideBar = styled.div`
   text-align: center;
   &:hover{
-    background-color: gray; 
+    background-color: pink; 
   }
 
 `;
