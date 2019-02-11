@@ -3,10 +3,10 @@ import styled from "styled-components";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap"
 
 class TypeRacer extends Component {
-    // constructor(props) {
-    //     super(props);
-    // }
-    handleClick = this.handleClick.bind(this)
+    constructor(props) {
+        super(props);
+    }
+
     // handleChange = this.handleChange.bind(this)
     state = {
         started: true,
@@ -23,43 +23,29 @@ class TypeRacer extends Component {
             started: this.state.started ? false : true
         })
     }
-    handleText = () => {
-        // const lastChar = this.state.typedWords[this.state.typedWords.length - 1]
-        // if (lastChar === ' ') {
-        //     console.log("typed: ", this.state.typedWords)
-        //     console.log("remaining: ", this.remainingWords[0])
-        //     if (this.state.typedWords === this.remainingWords[0] + ' ') {
-        //         this.finishedWords.push(this.remainingWords[0])
-        //         this.remainingWords.shift()
-        //         this.setState({
-        //             typedWords: ''
-        //         })
-
-        //     }
-        //     console.log("test: ", this.state.typedWords)
-        // }
-        const lastChar = this.state.typedWords[this.state.typedWords.length - 1]
+    handleText = e => {
+        const word = e.target.value
+        const lastChar = word[word.length - 1]
         if (lastChar === ' ') {
-            if (this.state.typedWords === this.remainingWords[0] + ' ') {
-                console.log("typed: ", this.state.typedWords)
-                console.log("remaining: ", this.remainingWords[0])
+            console.log("typed: ", this.state.typedWords)
+            console.log("remaining: ", this.remainingWords[0])
+            if (word === this.remainingWords[0] + ' ') {
                 this.finishedWords.push(this.remainingWords[0])
                 this.remainingWords.shift()
-                this.setState({
-                    typedWords: ''
-                })
-
-                console.log("test: ", this.state.typedWords)
+                e.target.value = ''
+                console.log("Riktig !!!!!!!!!!!")
             }
+            console.log("test: ", this.finishedWords)
         }
+
     }
     handleChange = e => {
         this.setState(
             { typedWords: e.target.value },
-            this.handleText
+            this.handleText(e)
         )
-        // console.log("tekst: ", this.state.typedWords)
     }
+
 
     render() {
         return (
@@ -75,8 +61,8 @@ class TypeRacer extends Component {
                             <FormControl
                                 componentClass="textarea"
                                 placeholder="Enter here"
+                                onChange={this.handleText}
                                 value={this.state.typedwords}
-                                onChange={this.handleChange}
                             />
                             {/* onFocus="true" */}
                         </FormGroup>
