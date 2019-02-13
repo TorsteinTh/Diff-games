@@ -1,37 +1,90 @@
 import React, { Component } from "react";
 import styled from "styled-components";
 import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap"
+// import JSON
 
 class TypeRacer extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            started: false,
+            typedWords: '',
+            remainingWords: ["test", "hei", "på", "dere"],
+            showText: ''
+        };
     }
-
-    // handleChange = this.handleChange.bind(this)
-    state = {
-        started: true,
-        typedWords: ''
-    };
-    parsedText = ''
     textArray = ["Her skal texten ligge!! XD "]
-    remainingWords = ["test", "hei", "på", "dere"]
     finishedWords = []
     totalTime = 0
+    wiki = ''
 
-    handleClick() {
+    componentDidMount() {
+        this.renderText()
+    }
+    handleClick = () => {
         this.setState({
             started: this.state.started ? false : true
         })
+    }
+    // https://en.wikipedia.org/w/api.php?action=view&format=json
+    renderText = () => {
+        const body = { method: 'GET', dataType: 'json', mode: 'cors', cache: 'default' };
+        // const contentenPage = 'https://no.wikipedia.org/w/api.php?format=json&action=query&titles=Andre_verdenskrig&prop=links&rvprop=content'
+        // fetch('https://no.wikipedia.org/w/api.php?action=opensearch&prop=revisions&format=json&origin=*&search=England', body)
+        //     .then(response => response.json())
+        //     .then(json => {
+        //         this.wiki = json[3][0]
+        //         console.log(this.wiki)
+        //     })
+
+        // fetch('https://no.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=json&origin=*&titles=England', body)
+        //     .then(res => res.json)
+        //     .then(json => {
+        //         console.log(json)
+        //     })
+
+
+
+        fetch('https://en.wikipedia.org/w/api.php?action=query&origin=*&list=search&srsearch=Edvard%20Grieg&titles=Edvard%20Grieg&prop=revisions&rvprop=content&utf8=&format=json', body)
+            // https://no.wikipedia.org/w/api.php?format=json&action=query&titles=Andre_verdenskrig&prop=revisions&rvprop=content
+            .then(response => response.json())
+            .then(json => {
+                console.log(json.query)
+                const page = json.query.pages
+                const pageId = Object.keys(page)[0]
+                console.log(pageId)
+                const rawContent = page[pageId].revisions[0]['*']
+                const content = rawContent.replace(/[&\/\\#+()$~%'":*?<>{}]/g, '')
+                const content1 = content.split("\n")  // /\s+/g)
+                console.log(rawContent)
+                console.log(content)
+                console.log(content1)
+                this.wiki = content1[25]
+                console.log(this.wiki)
+                this.setState({
+                    remainingWords: content1[25].split(' '),
+
+                })
+                this.setState({
+                    showText: this.state.remainingWords.join(" ")
+                })
+                console.log(this.state.remainingWords)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+        // const response = await fetch(new URL('http://www.example.com/démonstration.html'));
+
     }
     handleText = e => {
         const word = e.target.value
         const lastChar = word[word.length - 1]
         if (lastChar === ' ') {
             console.log("typed: ", this.state.typedWords)
-            console.log("remaining: ", this.remainingWords[0])
-            if (word === this.remainingWords[0] + ' ') {
-                this.finishedWords.push(this.remainingWords[0])
-                this.remainingWords.shift()
+            console.log("remaining: ", this.state.remainingWords[0])
+            if (word === this.state.remainingWords[0] + ' ') {
+                this.finishedWords.push(this.state.remainingWords.shift())
                 e.target.value = ''
                 console.log("Riktig !!!!!!!!!!!")
             }
@@ -39,12 +92,12 @@ class TypeRacer extends Component {
         }
 
     }
-    handleChange = e => {
-        this.setState(
-            { typedWords: e.target.value },
-            this.handleText(e)
-        )
-    }
+    // handleChange = e => {
+    //     this.setState(
+    //         { typedWords: e.target.value },
+    //         this.handleText(e)
+    //     )
+    // }
 
 
     render() {
@@ -55,7 +108,9 @@ class TypeRacer extends Component {
                 )}
                 {this.state.started && (
                     <div>
-                        {this.textArray}
+                        <TextHolder>
+                            {this.state.showText}
+                        </TextHolder>
                         <FormGroup controlId="formControlsTextarea">
                             <ControlLabel>Write the text </ControlLabel>
                             <FormControl
@@ -78,4 +133,9 @@ const GameScreen = styled.div`
     width: 100%;
     display: flex;
     justify-content: center;
+`;
+
+const TextHolder = styled.div`
+    display: flex;
+    justify-content: center;  
 `;

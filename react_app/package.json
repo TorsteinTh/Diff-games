@@ -4,6 +4,8 @@
   "private": true,
   "dependencies": {
     "bootstrap": "^3.4.0",
+    "json": "^9.0.6",
+    "loadjson": "^1.1.2",
     "npm": "^6.5.0",
     "react": "^16.5.2",
     "react-bootstrap": "^0.32.4",
