@@ -12,13 +12,16 @@ class Home extends Component {
 
     render() {
         return (
-            <div>
-                <SideBar>
-                    <h1>
-                        Welcome fuckface
-                    </h1>
-                </SideBar >
-            </div >
+
+            <SideBar>
+                <h1>
+                    Welcome
+                </h1>
+                <p>
+                    Please select game :)
+                </p>
+            </SideBar >
+
 
         )
     }
@@ -26,9 +29,12 @@ class Home extends Component {
 export default Home;
 
 const SideBar = styled.div`
+  margin: 0 40% 0 40%
   text-align: center;
+  transition-duration:  1s;
   &:hover{
     background-color: pink; 
+    font-size: 20px
   }
 
 `;

@@ -18,7 +18,10 @@ class Game1 extends Component {
         return (
             <GameScreen>
                 <Button bsStyle="success" onClick={this.handleClick}>Start game 1, BREAK OUT</Button>
-                Hei, inne i GAME 1
+                <br></br>
+                <p>
+                    (doesn't work)
+                </p>
             </GameScreen >
         );
     }
