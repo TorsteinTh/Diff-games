@@ -15,7 +15,7 @@ class Time extends Component {
 
 
     countDown() {
-        if (this.state.seconds == 0) {
+        if (this.state.seconds === 0) {
             this.props.timer_finished()
         }
         this.setState({

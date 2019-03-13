@@ -1,8 +1,5 @@
 import React, { Component } from "react"
 import styled from "styled-components"
-import { Button } from "react-bootstrap"
-import { Redirect } from "react-router-dom"
-
 
 class Home extends Component {
     constructor(props) {

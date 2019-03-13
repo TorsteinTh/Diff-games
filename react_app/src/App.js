@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import styled from "styled-components";
-import { Navbar, Nav, NavDropdown, Button } from "react-bootstrap"
 
 import Game_1 from "./Game_1/src/App.js"
 import TypeRacer from "./TypeRacer/src/App.js"

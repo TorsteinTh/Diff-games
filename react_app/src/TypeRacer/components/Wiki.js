@@ -24,7 +24,7 @@ export default class Wiki extends Component {
                 const pageId = Object.keys(page)[0]
                 console.log(pageId)
                 const rawContent = page[pageId].revisions[0]['*']
-                const content = rawContent.replace(/[&\/\\#+()$~%'":*?[[<>{}[]/g, '')
+                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]/g, '')
                 const content1 = content.split("\n")  // /\s+/g)
                 console.log(rawContent)
                 console.log(content)

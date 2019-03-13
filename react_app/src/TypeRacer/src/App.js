@@ -37,7 +37,7 @@ class TypeRacer extends Component {
             e.target.value = ''
         }
 
-        if (this.state.remainingWords.length == 0) {
+        if (this.state.remainingWords.length === 0) {
             this.setState({
                 finished: true
             })
@@ -77,7 +77,7 @@ class TypeRacer extends Component {
 
 
 
-                        {this.state.timer_finished == true ? (
+                        {this.state.timer_finished === true ? (
                             <FormGroup>
                                 <ControlLabel>Write the text </ControlLabel>
                                 <FormControl
