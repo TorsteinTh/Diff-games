@@ -10,19 +10,64 @@ export default class Wiki extends Component {
     }
 
     componentDidMount() {
-        this.renderText()
+        if (this.state.wantedContent === "") {
+            this.renderRandom()
+        } else {
+            this.renderText()
+        }
     }
     // TODO: fix the wiki, to search for what you entered....
-    renderText = () => {
-        const body = { method: 'GET', dataType: 'json', mode: 'cors', cache: 'default' };
-        fetch('https://en.wikipedia.org/w/api.php?action=query&origin=*&list=search&srsearch=Edvard%20Grieg&titles=Edvard%20Grieg&prop=revisions&rvprop=content&utf8=&format=json', body)
+    renderRandom = () => {
+        fetch('https://en.wikipedia.org/w/api.php?action=query&generator=random&prop=revisions&origin=*&rvprop=content&format=json')
+            .then(response => response.json())
+            .then(json => {
+                console.log(json.query)
+                const page = json.query.pages
+                const pageId = Object.keys(page)[0]
+                const rawContent = page[pageId].revisions[0]['*']
+                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]/g, '')
+                const content1 = content.split("\n")  // /\s+/g)
+                console.log(rawContent)
+                console.log(content)
+                console.log(content1)
+                if (content1.length < 10) {
+                    this.renderRandom()
+                }
+                this.wiki = content1[16]
+                console.log(this.wiki)
+                this.setState({
+                    remainingWords: content1[16].split(' '),
+
+                })
+                console.log(this.state.remainingWords)
+
+                this.props.set_content(this.state.remainingWords)
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
+
+    }
+
+    renderText = search_word => {
+        console.log(search_word)
+        const URL = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&list=search&prop=revisions&rvprop=content&utf8=&format=json'
+        const words = search_word.split("\n")
+        const search_word_with = ""
+        const new_search_words = words.map(e =>
+            e + "%20"
+        )
+        console.log(new_search_words)
+        console.log(search_word_with)
+        fetch(URL + new_search_words)
+            // https://en.wikipedia.org/w/api.php?action=query&origin=*&list=search&srsearch=Edvard%20Grieg&titles=Edvard%20Grieg&prop=revisions&rvprop=content&utf8=&format=json')
             // https://no.wikipedia.org/w/api.php?format=json&action=query&titles=Andre_verdenskrig&prop=revisions&rvprop=content
             .then(response => response.json())
             .then(json => {
                 console.log(json.query)
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
-                console.log(pageId)
                 const rawContent = page[pageId].revisions[0]['*']
                 const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]/g, '')
                 const content1 = content.split("\n")  // /\s+/g)
@@ -52,21 +97,22 @@ export default class Wiki extends Component {
         console.log(this.state.wantedContent)
     }
 
-    handleSubmit = () => {
-        this.renderText()
+    handleSubmit = e => {
+        e.preventDefault()
+        this.renderText(this.state.wantedContent)
         this.props.want_to_start()
     }
 
     render() {
         return (
             <div>
-                {/* <p style={{ fontweight: "bold" }}> Is there somethong you want to write about:</p>
+                <p> Is there somethong you want to write about:</p>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         onChange={this.handleChange}
                         value={this.state.wantedContent}
                         autoFocus />
-                </form> */}
+                </form>
             </div>
         )
     }

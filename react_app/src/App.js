@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Switch } from "react-router-dom"
 import Home from "./components/Home.js"
 import NavbarGames from "./components/Navbar.js"
 import Fail from "./components/Fail.js"
+import Loaders from "./components/Loaders.js"
 
 
 
@@ -26,6 +27,7 @@ class App extends Component {
           <Switch>
             <Route path="/game_1" component={Game_1} ></Route>
             <Route path="/game_2" component={TypeRacer} ></Route>
+            <Route path="/loaders" component={Loaders} ></Route>
             <Route path="/" component={() => <Home />} exact></Route>
             <Route component={() => <Fail />}></Route>
           </Switch>

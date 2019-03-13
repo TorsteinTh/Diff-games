@@ -11,6 +11,7 @@ const NavbarGames = () => {
                 <a className="navbar-brand" href="/game_1">Game 1</a>
                 <a className="navbar-brand" href="/game_2">Game 2</a>
                 <a className="navbar-brand" href="/game_3">Game 3</a>
+                <a className="navbar-brand" href="/loaders">Loaders</a>
 
             </Navbar.Collapse>
         </Navbar>
