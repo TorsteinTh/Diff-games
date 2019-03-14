@@ -1,45 +1,36 @@
-READ ME FILE
+README
 
-This is for the breakout game
-
-
-
-
-
-
-To start the program, enter 'python3 main.py' in the terminal
-
-
-
-A new window called 'Breakout' will apper on your screen.
-
-
-
-The game will start in a start-meny where instruction will be given
+Mayham game
 
 
 
 
 
 
+Please enter    $python3 main.py       to start the game
+                ----------------
+--------------------------------------------------------
 
 
 
-
-Your key options:
-
-
-Press 'SPACEBAR'    to start    the game
-
-Press 'r'           to restart  the game
-
-Press 'q' or 'Esc'  to quit     the game
-
-Press 'y'           to autowin  the game
+Player one        |      Player Two      |          Action
+---------------------------------------------------------
+UP    - arrow     |        'w'           |          Engine
+LEFT  - arrow     |        'a'           |          Rotate left  
+RIGHT - arrow     |        'd'           |          Rotate Right
+DOWN  - arrow     |        'spacebar'    |          Fire shots
 
 
 
-Press 'RIGHT-KEY' and 'LEFT-KEY' to move the player
+Others
+---------------------------------------------------------
+'r'                                      Restart
+Esc                                      Exit
+
+
+---------------------------------------------------------
+Tip: Don't die 
+---------------------------------------------------------
 
 
 
@@ -50,24 +41,4 @@ Press 'RIGHT-KEY' and 'LEFT-KEY' to move the player
 
 
 
-
-The game is won then there is no more boxes 
-
-
-
-When you win the game, you have the options to either exit the game or to play again
-
-
-
-
-When you lose the game or exit, the window will be closed 
-
-
-
-
-
-
-
-
-
-Enjoy the Breakout game :) 
+Enjoy the Mayham game :) 

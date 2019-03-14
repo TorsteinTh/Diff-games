@@ -12,9 +12,9 @@ class RenderText extends Component {
         return (
             <div>
                 <TextHolder>
-                    <FinishedTextHolder>
+                    <span className="FinishedTextHolder">
                         {this.props.finishedWords.join(" ") + " "}
-                    </FinishedTextHolder>
+                    </span>
                     {this.props.remainingWords.join(" ")}
                 </TextHolder>
 
@@ -27,9 +27,10 @@ export default RenderText;
 
 const TextHolder = styled.p` 
     background-color: lightgray;
+    
+    .FinishedTextHolder {    
+        color: white  
+        background-color: lightgreen;
+    }
 `;
 
-const FinishedTextHolder = styled.span`
-    color: white  
-    background-color: lightgreen;
-`;

@@ -1,214 +1,381 @@
 import pygame as pg
-import precode as pc                    #imports the other file that is used
-import random                           #imports the random function to make random colors on the boxes
+import precode2 as pc
+from config import *
+import abc
+import math
+import randomz
 
-'''creates a window, with name and fps'''
-screen_dim = [700 , 1000]               
-pg.init()
-window = pg.display.set_mode(screen_dim)
-pg.display.set_caption("Breakout")
-fps = 100
-clock = pg.time.Clock()
-
-'''classes'''
-class Square():
-    def __init__(self, window, x, y):
-        self.dim = [60, 30]             #size of box  [0]=width  [1]=height
-        self.color = [random.randint(200,250),random.randint(54,155),random.randint(240,255)]
-        self.pos = pc.Vector2D(x,y)
-        self.window = window
-
-    def draw(self): 
-        pg.draw.rect(window, self.color, [self.pos.x] + [self.pos.y] + self.dim) 
-    
-
-class Ball():
+class Object(pg.sprite.Sprite):
+    """class for all visible objects"""
     def __init__(self):
-        self.pos = pc.Vector2D((screen_dim[0]/2),(screen_dim[1]/2))             #place the ball in the senter of the screen
-        self.rad = 10
-        self.speed = pc.Vector2D(1,8)                                           
-        self.color = [255, 255, 255] 
-    
-    def moveball(self):
-        self.pos.x += self.speed.x
-        self.pos.y += self.speed.y
-    
-    def draw(self):  
-        pg.draw.circle(window, self.color, (int(self.pos.x), int(self.pos.y)), self.rad)
+        pg.sprite.Sprite.__init__(self)
+        self.image
 
-    '''Crash function between player and the boxes(square)'''
-    def crash(self, square): 
-        if pc.intersect_rectangle_circle(square.pos, square.dim[0], square.dim[1], ball.pos, ball.rad, ball.speed):
-            ball.speed =  pc.intersect_rectangle_circle(square.pos, square.dim[0], square.dim[1], ball.pos, ball.rad, ball.speed) * abs(ball.speed)
+class Player(Object):
+    """contains all attributes and methods for players(spaceships)"""
+    def __init__(self, key1, key2, key3, key4, image, score):    
+        pg.sprite.Sprite.__init__(self)
+        self.dir = 0
+        self.score = score
+        self.fuel = FUELTANK_SIZE
+        self.speed = pc.Vector2D(0,0)
+        self.orgimage = pg.image.load(image)
+        self.image = pg.image.load(image)
+        self.rect = self.image.get_rect()
+        self.tip = self.rect.top + 50
+        self.key1 = key1
+        self.key2 = key2
+        self.key3 = key3 
+        self.key4 = key4
+        self.timeshot = 0
+
+    def collision_player(self, playergroup):
+        """collision between other players"""
+        for n in playergroup:
+            if self != n:
+                if pg.sprite.collide_mask(self, n):
+                    self.score -= SCORE_COLLISION
+                    n.score -= SCORE_COLLISION
+                    n.reborn(playergroup)
+                    self.reborn(playergroup)
+
+    def collision_obs(self, playergroup, obsgroup):
+        """collision between players and obstacles"""
+        for n in obsgroup:
+            if pg.sprite.collide_mask(self, n):
+                self.score -= SCORE_COLLISION
+                self.reborn(playergroup)
+
+    def collision_shoot(self, playergroup, shootgroup1, shootgroup2):
+        """when one player gets hit with the bullet of another player"""
+        for i in playergroup:
+            if self.key1 == P1_KEY_ENGINE:
+                for n in shootgroup2:
+                    if pg.sprite.collide_mask(self, n):
+                        if i != self:   
+                            i.score += SCORE_HIT
+                            self.reborn(playergroup)
+            if self.key1 == P2_KEY_ENGINE:
+                for n in shootgroup1:
+                    if pg.sprite.collide_mask(self, n):
+                        if i != self:
+                            i.score += SCORE_HIT
+                            self.reborn(playergroup)
+
+    def reborn(self, playergroup):
+        """revive players after collsion or been shot"""
+        if self.key1 == P1_KEY_ENGINE:
+            score = self.score
+            playergroup.remove(self)
+            player1 = Player(P1_KEY_ENGINE, P1_KEY_LEFT, P1_KEY_RIGHT, P1_KEY_SHOOT, "ship.png", score)
+            player1.rect.x += SCREEN_WIDTH - 50
+            playergroup.add(player1)
+        if self.key1 == P2_KEY_ENGINE:
+            score = self.score
+            playergroup.remove(self)
+            player2 = Player(P2_KEY_ENGINE, P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_SHOOT, "ship2.png", score)
+            playergroup.add(player2)
+
+    def gravity(self):
+        """gravity to pull the objects down"""
+        self.speed.y += 0.07
+
+    def screen(self):
+        """boundaries for screen"""
+        if self.rect.left > SCREEN_WIDTH:
+            self.rect.right = 0
+        if self.rect.right < 0:
+            self.rect.left = SCREEN_WIDTH
+        if self.rect.bottom > SCREEN_HEIGHT:
+            self.rect.bottom = SCREEN_HEIGHT
+            self.speed.y = 0
+        if self.rect.top < 0:
+            self.rect.top = 0
+            self.speed.y = 0
+
+    def constantly_moving(self):
+        """makes objects constantly move"""
+        unewx = -self.speed.x / 40
+        unewy = -self.speed.y / 40
+        self.speed.x += unewx
+        self.speed.y += unewy
+        self.rect.x += self.speed.x
+        self.rect.y += self.speed.y
+    
+    def engine(self):
+        """controls fuel tank and makes object move"""
+        if self.fuel > 0:
+            self.speed += self.move()
+            self.fuel -= FUEL_LOOSE
+
+    def move(self):
+        """find direction and move thereafter"""
+        angle = self.dir % 360 + 90
+        rad = angle*(math.pi / 180)
+        newx =  math.cos(rad) * 0.7
+        newy = -math.sin(rad) * 0.7
+        self.speed = pc.Vector2D(newx,newy)
+        return self.speed
+
+    def rotate(self):
+        """makes the image rotate"""
+        centerrect = self.rect.center
+        self.image = pg.transform.rotate(self.orgimage, self.dir)
+        self.rect = self.image.get_rect()
+        self.rect.center = centerrect
+
+    def rotateleft(self):
+        """change the rotation of direction to the left"""
+        self.dir += 4
+
+    def rotateright(self):
+        """change the rotation of direction to the right"""
+        self.dir -= 4
+
+    def keys(self, shootgroup1, shootgroup2):
+        """create controlls for players"""
+        keys = pg.key.get_pressed()
+
+        if keys[self.key1]:             #forwards
+            self.engine()
+        if keys[self.key2]:             #moves left
+            self.rotateleft()
+        if keys[self.key3]:             #moves right
+            self.rotateright()
+        if keys[self.key4]:             #shoot
+            self.shoot(shootgroup1, shootgroup2)
+        if keys[pg.K_ESCAPE]:           #exit the game
+            exit()
+        if keys[pg.K_r]:                #restart the game
+            Game()
+
+    def rapitfire(self, time):
+        """decrease rate of fire"""
+        diff = time - self.timeshot
+        if diff > 500:
             return True
+
+    def shoot(self, shootgroup1, shootgroup2):
+        """creates bullets for players to shot"""
+        time = pg.time.get_ticks()
+        if self.key1 == P1_KEY_ENGINE:
+            if self.rapitfire(time):
+                shot = Shot("bullet.png", self.dir, self.rect, BULLET_SIZE)
+                shootgroup1.add(shot)
+                self.timeshot = pg.time.get_ticks()
+        if self.key1 == P2_KEY_ENGINE:
+            if self.rapitfire(time):
+                shot = Shot("bullet2.png", self.dir, self.rect, BULLET_SIZE)
+                shootgroup2.add(shot)
+                self.timeshot = pg.time.get_ticks()
+
+    def update(self, playergroup, shootgroup1, shootgroup2, obsgroup):
+        """updates all methods for player class"""
+        self.keys(shootgroup1, shootgroup2)
+        self.constantly_moving()
+        self.rotate()
+        self.gravity()
+        self.collision_obs(playergroup, obsgroup)
+        self.collision_shoot(playergroup, shootgroup1, shootgroup2)
+        self.collision_player(playergroup)
+        self.screen()
+
+class Gun(abc.ABC, Object):
+    """abstract class"""
+    @abc.abstractmethod
+    def __init__(self, image, di, rect, scale):
+        pass
+
+    @abc.abstractmethod
+    def move(self):
+        pass
+
+    @abc.abstractmethod
+    def constantly_moving(self):
+        pass
+
+    @abc.abstractmethod
+    def screen(self, shootgroup):
+        pass
+
+    @abc.abstractmethod
+    def update(self, playergroup, shootgroup, brickgroup, obsgroup):
+        pass
+
+class Shot(Gun):
+    """class for bullets"""
+    def __init__(self, image, di, rect, scale):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(image)
+        self.size = self.image.get_size()
+        self.image = pg.transform.scale(self.image,(int(self.size[0]/scale), int(self.size[1]/scale)))
+        self.rect = rect
+        self.color = [255,255,255]
+        self.speed = pc.Vector2D(0,0)
+        self.dir = di
+
+    def move(self):
+        """makes bullets move"""
+        angle = self.dir % 360 + 90
+        rad = angle*(math.pi / 180)
+
+        newx =  math.cos(rad) * 20
+        newy = -math.sin(rad) * 20
+
+        self.speed = pc.Vector2D(newx,newy)
+        return self.speed
+
+    def constantly_moving(self):
+        """makes bullets constantly move"""
+        self.rect.x += self.speed.x
+        self.rect.y += self.speed.y
+
+    def screen(self, shootgroup1, shootgroup2):
+        """removes bullets from groups when outside screen"""
+        if self.rect.left    > SCREEN_WIDTH  and \
+            self.rect.right  < 0             and \
+            self.rect.top    > SCREEN_HEIGHT and \
+            self.rect.bottom < 0:
+            shootgroup1.remove(self)
+            shootgroup2.remove(self)
+
+    def update(self, shootgroup1, shootgroup2):
+        """update all methods concerning bullets(shot)"""
+        self.move()
+        self.constantly_moving()
+        self.screen(shootgroup1, shootgroup2)
+        
+class Obs(Object):
+    """class for obstacles with attributes and methods"""
+    def __init__(self, image, scale):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(image)
+        self.rect = self.image.get_rect()
+        self.size = self.image.get_size()
+        self.image = pg.transform.scale(self.image,(int(self.size[0]/scale), int(self.size[1]/scale)))
+
+    def hit(self, shootgroup1, shootgroup2):
+        """ checks if bullets hits obstacles and removes from group"""
+        pg.sprite.spritecollide(self, shootgroup1, True)
+        pg.sprite.spritecollide(self, shootgroup2, True)
+
+    def update(self, shootgroup1, shootgroup2):
+        """update obstacle"""
+        self.hit(shootgroup1, shootgroup2)
+ 
+class Mapit():
+    """contains scoreboards for players"""
+    def scoreboard1(self, screen, player_score1, player_fuel1):
+        font = pg.font.Font(None, TEXT_SIZE)
+        screen.blit(font.render("Score: %d" %player_score1 ,50,(PINK)), (10,10))
+        screen.blit(font.render("Fuel: %d" %player_fuel1 ,50,(PINK)), (10,40))
+
+    def scoreboard2(self, screen, player_score2, player_fuel2):
+        font = pg.font.Font(None, TEXT_SIZE)
+        screen.blit(font.render("Score: %d" %player_score2 ,50,(WHITE)), (1020,10))
+        screen.blit(font.render("Fuel: %d" %player_fuel2 ,50,(WHITE)), (1020,40))
+
+class Fuel(Object):
+    """class for fuelbarrels with attributes and methods"""
+    def __init__(self, image):
+        pg.sprite.Sprite.__init__(self)
+        self.image = pg.image.load(image)
+        self.rect = self.image.get_rect()
+
+    def addfuel(self, i):
+        """add fuel to players fueltanks"""
+        i.fuel += FUEL_ADD
+
+    def spawnfuel(self, fuelgroup):
+        """creates new fuelbarrel when another fuelbarrel is removed"""
+        fuel = Fuel("powerupGreen_bolt.png")
+        fuel.rect.x = random.randint(0, SCREEN_WIDTH-50)
+        fuel.rect.y = random.randint(0, SCREEN_HEIGHT-50)
+        fuelgroup.add(fuel)
     
-    '''Crash function between the player and the ball'''
-    def playerhit(self): 
-        if pc.intersect_rectangle_circle(player.pos, player.dim[0], player.dim[1], ball.pos, ball.rad, ball.speed):
-            padball = pc.intersect_circles(pc.Vector2D(player.pos.x + player.dim[0] / 2, player.pos.y + 110),player.dim[0],ball.pos, ball.rad)
-            ball.speed = padball * abs(ball.speed)
+    def playerhit(self, fuelgroup, playergroup):
+        """ when a player hits a fuelbarrel it gains fuel and removes fuelbarrel"""
+        for i in playergroup:
+            if pg.sprite.spritecollide(i, fuelgroup, True):
+                self.spawnfuel(fuelgroup)
+                self.addfuel(i)
 
-    '''stops the ball and show the winning screen'''
-    def win(self):
-        ball.speed.x = 0
-        ball.speed.y = 0
-        player.speedplayer = [0,1]
-        font = pg.font.Font(None, 150)
-        window.blit(font.render("YOU WON", 50, (255,200,255)),(110,200))
-        fonte = pg.font.Font(None, 30)
-        window.blit(fonte.render("PRESS 'R' TO RESTART THE GAME", 30, (255,130,255)),(200,350))
-        fonte = pg.font.Font(None, 30)
-        window.blit(fonte.render("PRESS 'Q' or 'Esc' TO QUIT THE GAME", 30, (255,130,255)),(180,400))
+    def update(self, fuelgroup, playergroup):
+        """update all methods for fuel"""
+        self.playerhit(fuelgroup, playergroup)
 
-    '''The start page, lets the player decide then to start'''
-    def start(self):
-        font = pg.font.Font(None, 50)
-        window.blit(font.render("PRESS SPACEBAR TO START", 30, (255,130,255)),(120,450))
-
-
-class Player():
+class Game():
+    """class for gmae with all attributes and methods"""
     def __init__(self):
-        self.dim = [160, 10]        #size of player [0]=width  [1]=height
-        self.color = [255,100,150]
-        self.pos = pc.Vector2D(((screen_dim[0]/2) - (self.dim[0]/2)),((screen_dim[1] - self.dim[1]))) 
-        self.speedplayer = [7,7]
-       
-    def moveright(self):
-        self.pos.x += self.speedplayer[0]
+        pg.display.set_caption("MAYHEM CLONE")
+        self.fps = 60
+        self.clock = pg.time.Clock()
+        self.screen_dim = SCREENSIZE 
+        self.window = pg.display.set_mode(self.screen_dim)
+        self.Main()
 
-    def moveleft(self):
-        self.pos.x -= self.speedplayer[1]
+    def startgame(self, playergroup, obsgroup, fuelgroup):
+        """setup for the game"""
+        player1 = Player(P1_KEY_ENGINE, P1_KEY_LEFT, P1_KEY_RIGHT, P1_KEY_SHOOT, "ship.png", 0)
+        player1.rect.x += SCREEN_WIDTH - 50
+        playergroup.add(player1)
 
-    def draw(self):  
-        pg.draw.rect(window, self.color, [self.pos.x] + [self.pos.y] + self.dim)
+        player2 = Player(P2_KEY_ENGINE, P2_KEY_LEFT, P2_KEY_RIGHT, P2_KEY_SHOOT, "ship2.png", 0)
+        playergroup.add(player2)
 
-'''end of classes'''
-    
-    
+        for i in range(3):
+            fuel = Fuel("powerupGreen_bolt.png")
+            fuel.rect.x = random.randint(0, SCREEN_WIDTH-50)
+            fuel.rect.y = random.randint(0, SCREEN_HEIGHT-50)
+            fuelgroup.add(fuel)
 
+            obs = Obs("meteorGrey_big1.png",random.randint(1,3))
+            obs.rect.x = random.randint(0,SCREEN_WIDTH-50)
+            obs.rect.y = random.randint(0,SCREEN_HEIGHT-50)
+            obsgroup.add(obs)
 
+    def Main(self):
+        """create and update all object groups. Calls all methods and execute"""
+        pg.init()
+        playergroup = pg.sprite.Group()
+        shootgroup1 = pg.sprite.Group()
+        shootgroup2 = pg.sprite.Group()
+        obsgroup = pg.sprite.Group()
+        fuelgroup = pg.sprite.Group()
 
+        Game.startgame(self, playergroup, obsgroup, fuelgroup)
+        mapit = Mapit()
 
+        while True:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    exit()
+                        
+            self.window.fill(BLACK)
 
-'''standard values declared before the main loop starts'''
-ball = Ball()
-player = Player()
-k_up = False
-k_down = False
-k_right = False
-k_left = False
-activeball = False
+            obsgroup.draw(self.window)
+            obsgroup.update(shootgroup1, shootgroup2)
 
-'''makes a list with all the coordinates to the boxes'''
-coloumns = 5
-rows = 10
-boxlist = []
-box_x = 5                                               #start coordinates values
-box_y = 10 
-for i in range(coloumns):
-    for j in range(rows):
-        boxlist.append(Square(window,box_x,box_y))    
-        box_x += boxlist[0].dim[0] + 10
-    box_x = 5
-    box_y += boxlist[1].dim[1] + 10 
+            fuelgroup.draw(self.window)
+            fuelgroup.update(fuelgroup, playergroup)
 
+            playergroup.draw(self.window)
+            playergroup.update(playergroup, shootgroup1, shootgroup2, obsgroup)
+            
+            shootgroup1.draw(self.window)
+            shootgroup1.update(shootgroup1, shootgroup2)
 
+            shootgroup2.draw(self.window)
+            shootgroup2.update(shootgroup1, shootgroup2)
+            
+            for i in playergroup:
+                if i.key1 == P2_KEY_ENGINE:
+                    mapit.scoreboard1(self.window, i.score, i.fuel)
+                if i.key1 == P1_KEY_ENGINE:
+                    mapit.scoreboard2(self.window, i.score, i.fuel)
 
-
-
-
-
-
-
-'''Main!'''
+            self.clock.tick(self.fps)
+            pg.display.update()
 
 if __name__ == "__main__":
-    while True:
-        window.fill((30, 10, 50))                                            #background color
-
-        '''start of key function'''
-        for event in pg.event.get():
-            
-            if event.type == pg.QUIT:
-                exit()
-
-            if event.type == pg.KEYDOWN: 
-                if event.key == pg.K_q or event.key == pg.K_ESCAPE:         #quits the game
-                    exit()
-                if event.key == pg.K_LEFT:                                  #controls the player
-                    k_left = True
-                if event.key == pg.K_RIGHT:
-                    k_right = True
-                if event.key == pg.K_SPACE:                                 #starts the game
-                    activeball = True
-                if event.key == pg.K_r:                                     #restart the game, puts every value that have been changed back to start values
-                    activeball = False
-                    ball.speed = pc.Vector2D(1,8)
-                    ball.pos = pc.Vector2D(int(screen_dim[0]/2),(int(screen_dim[1]/2)))
-                    player.pos = pc.Vector2D(int((screen_dim[0]/2) - (player.dim[0]/2)),int((screen_dim[1] - player.dim[1])))
-                    player.speedplayer = [8,8] 
-                    boxlist = []
-                    box_x = 5                                               #creats a new and full list
-                    box_y = 10 
-                    for i in range(coloumns):
-                        for j in range(rows):
-                            boxlist.append(Square(window,box_x,box_y))
-                            box_x += boxlist[0].dim[0] + 10 
-                        box_x = 5
-                        box_y += boxlist[1].dim[1] + 10
-                if event.key == pg.K_y:                                     #cheatkey to autowin
-                    boxlist = []
-                    ball.win()
-
-            if event.type == pg.KEYUP:                                      #stops the player if not key is pressed
-                if event.key == pg.K_LEFT:
-                    k_left = False
-                if event.key == pg.K_RIGHT:
-                    k_right = False
-        '''end of key function'''
-
-
-
-
-        if ball.pos.x > screen_dim[0] or ball.pos.x < 0:                    #bounces the ball of the walls             
-            ball.speed.x *= -1
-        if ball.pos.y > screen_dim[1] or ball.pos.y < 0:
-            ball.speed.y *= -1
-
-        if ball.pos.y >= screen_dim[1]:                                      #loses when the ball hits the floor
-            ball.speed.y *= -1
-            print("You lost!")
-            # quit()                                      
-        
-        if k_right and player.pos.x + player.dim[0] < screen_dim[0]:        #controls the player, and limits to move it more than the screen
-            player.moveright()
-        if k_left and player.pos.x > 0:                                 
-            player.moveleft()
-         
-        if activeball == False:             #show the startscreen if not started
-            ball.start()
-        if activeball:                      #sjekker hvis ball er aktiv
-            ball.moveball()
-            
-
-        '''removes the boxes(square)'''
-        hit_box = False                   
-        for i in boxlist:                   #iterates trough the list
-            i.draw()                        #draws the boxes in the list
-            if ball.crash(i) == True:
-                hit_box = True              #removes the box outside the (for-loop) to make it smoother
-                tmp = i                     #holds the coordinates of the current hitted box 
-
-        if hit_box:                         #if the ball hits a box, it removes the current hitted box 
-            boxlist.remove(tmp)
-
-        if not boxlist:                     #if list is empty you win
-            ball.win()
-
-
-        ball.playerhit()                    #bounces the ball if it hits the player
-        ball.draw()                         #draws the player and ball
-        player.draw()
-
-        pg.display.update()                 #updates the screenS
-        clock.tick(fps)
+    Game()

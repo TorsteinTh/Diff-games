@@ -2,6 +2,11 @@
 
 """ Pre-code for INF-1400
 
+21 February 2018 Revision 4 (Lars Brenna):
+- Removed references to inherit object. (Bloat.)
+- Corrected error messages in mul and truediv.
+- Changed from "return False" to raise Exception when there is no intersection 
+
 16 January 2017 Revision 3 (Mads Johansen):
 Rewritten to conform to Python 3 standard. Made class iterable, added property as_point,
 replaced magnitude with __abs__ (to reflect mathematical vector notation), added rotate method.
@@ -20,7 +25,7 @@ from math import hypot, cos, sin, radians
 import pygame
 
 
-class Vector2D(object):
+class Vector2D():
     """Implements a two dimensional vector.
 
     :param x: First component for the vector.
@@ -70,7 +75,7 @@ class Vector2D(object):
             b = float(b)
             return Vector2D(self.x * b, self.y * b)
         except ValueError:
-            raise ValueError("Right value must be a float, was {}".format(b))
+            raise ValueError("Right value must be castable to float, was {}".format(b))
 
     def __truediv__(self, b):
         """ Vector division by a scalar.
@@ -81,7 +86,7 @@ class Vector2D(object):
             b = float(b)
             return Vector2D(self.x / b, self.y / b)
         except ValueError:
-            raise ValueError("Right value must be a float, was {}".format(b))
+            raise ValueError("Right value must be castable to float, was {}".format(b))
 
     def __iter__(self):
         """ Generator function used to iterate over components of vector.
@@ -95,7 +100,7 @@ class Vector2D(object):
             b = float(b)
             return Vector2D(self.x * b, self.y * b)
         except (ValueError, ZeroDivisionError):
-            raise ValueError("Scalar must be a float, was {}".format(b))
+            raise ValueError("Scalar must be castable to float, was {}".format(b))
 
     def __abs__(self):
         """ Returns the magnitude of the vector. """
@@ -104,14 +109,14 @@ class Vector2D(object):
     def normalized(self):
         """ Returns a new vector with the same direction but magnitude 1.
         :returns: A new unit vector with the same direction as self.
-        NOTE: Returns a unit vector of zero degrees if self has magnitude 0.
+        Throws ZeroDivisionError if trying to normalize a zero vector.
         """
         try:
             m = abs(self)
             return self / m
-        except ZeroDivisionError:
-            # Attempted to normalize a zero vector, return a unit vector at zero degrees
-            return Vector2D(1, 0)
+        except ZeroDivisionError as e:
+            return self / 1
+        #    return Vector2D(1, 0)
 
     def copy(self):
         """ Returns a copy of the vector.
@@ -150,7 +155,7 @@ def intersect_rectangle_circle(rec_pos, sx, sy, circle_pos, circle_radius, circl
     circle_speed - A Vector2D representing the circles speed.
     
     Returns:
-    False if no intersection. If the rectangle and the circle intersect, returns
+    Exception if no intersection. If the rectangle and the circle intersect, returns
     a normalized Vector2D pointing in the direction the circle will move after
     the collision.
     
@@ -184,6 +189,7 @@ def intersect_rectangle_circle(rec_pos, sx, sy, circle_pos, circle_radius, circl
 
         return impulse.normalized()
     return False
+    # raise Exception("No intersection") 
 
 
 def intersect_circles(a_pos, a_radius, b_pos, b_radius):
@@ -196,7 +202,7 @@ def intersect_circles(a_pos, a_radius, b_pos, b_radius):
     b_radius    - Circle B's radius
     
     Returns:
-    False if no intersection. If the circles intersect, returns a normalized
+    Raises exception if no intersection. If the circles intersect, returns a normalized
     Vector2D pointing from circle A to circle B.
     
     """
@@ -207,6 +213,7 @@ def intersect_circles(a_pos, a_radius, b_pos, b_radius):
         return dp1p2.normalized()
     else:
         return False
+       # raise Exception("No intersection") 
 
 
 def example_code():

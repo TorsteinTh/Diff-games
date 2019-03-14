@@ -13,19 +13,20 @@ export default class Wiki extends Component {
         if (this.state.wantedContent === "") {
             this.renderRandom()
         } else {
-            this.renderText()
+            this.renderRandom() ///////////
         }
     }
     // TODO: fix the wiki, to search for what you entered....
+    // api.php?action=parse&text={{Project:Sandbox}}&contentmodel=wikitext
     renderRandom = () => {
-        fetch('https://en.wikipedia.org/w/api.php?action=query&generator=random&prop=revisions&origin=*&rvprop=content&format=json')
+        fetch('https://en.wikipedia.org/w/api.php?action=query&text={{Project:Sandbox}}&contentmodel=wikitext&generator=random&prop=revisions&origin=*&rvprop=content&format=json')
             .then(response => response.json())
             .then(json => {
                 console.log(json.query)
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
-                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]/g, '')
+                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|[[<>{}[]/g, '')
                 const content1 = content.split("\n")  // /\s+/g)
                 console.log(rawContent)
                 console.log(content)
@@ -33,10 +34,19 @@ export default class Wiki extends Component {
                 if (content1.length < 10) {
                     this.renderRandom()
                 }
-                this.wiki = content1[16]
+                var i = 5
+                while (content1[i] === "" || content1[i].length < 10) {
+                    if (content1[i] === undefined || i > 1000) {
+                        this.renderRandom()
+                        return
+                    }
+                    i++
+                }
+                this.wiki = content1[i]
+
                 console.log(this.wiki)
                 this.setState({
-                    remainingWords: content1[16].split(' '),
+                    remainingWords: content1[i].split(' '),
 
                 })
                 console.log(this.state.remainingWords)
@@ -51,7 +61,6 @@ export default class Wiki extends Component {
     }
 
     renderText = search_word => {
-        console.log(search_word)
         const URL = 'https://en.wikipedia.org/w/api.php?action=query&origin=*&list=search&prop=revisions&rvprop=content&utf8=&format=json'
         const words = search_word.split("\n")
         const search_word_with = ""
@@ -74,7 +83,7 @@ export default class Wiki extends Component {
                 console.log(rawContent)
                 console.log(content)
                 console.log(content1)
-                this.wiki = content1[25]
+                this.wiki = content1[16]
                 console.log(this.wiki)
                 this.setState({
                     remainingWords: content1[25].split(' '),
@@ -99,7 +108,11 @@ export default class Wiki extends Component {
 
     handleSubmit = e => {
         e.preventDefault()
-        this.renderText(this.state.wantedContent)
+        if (this.state.wantedContent === "") {
+            this.renderRandom()
+        } else {
+            this.renderRandom() ///////////this.state.wantedContent
+        }
         this.props.want_to_start()
     }
 
