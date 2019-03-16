@@ -8,7 +8,6 @@ class Loader extends Component {
         return (
             <div sylte={{ alingItems: "center" }}>
 
-
                 <PageWrapper>
                     Loader 1:
                     <Loader1 />

@@ -29,7 +29,10 @@ class App extends Component {
             <Route path="/game_2" component={TypeRacer} ></Route>
             <Route path="/loaders" component={Loaders} ></Route>
             <Route path="/" component={() => <Home />} exact></Route>
-            <Route component={() => <Fail />}></Route>
+            <Route component={() =>
+              <Fail />
+            }>
+            </Route>
           </Switch>
         </div>
 

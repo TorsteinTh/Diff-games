@@ -18,11 +18,26 @@ export default class Wiki extends Component {
     }
     // TODO: fix the wiki, to search for what you entered....
     // api.php?action=parse&text={{Project:Sandbox}}&contentmodel=wikitext
+    // /w/api.php?action=parse&format=json&page=Wikipedia%3AUnusual_articles%2FPlaces_and_infrastructure&prop=wikitext&section=5
+    // https://en.wikipedia.org/w/api.php?action=query&generator=random&prop=revisions&origin=*&rvprop=content&format=json
+    // https://en.wikipedia.org/w/api.php?action=parse&format=json&page=Wikipedia%3AUnusual_articles%2FPlaces_and_infrastructure&origin=*&prop=text&section=5
     renderRandom = () => {
-        fetch('https://en.wikipedia.org/w/api.php?action=query&text={{Project:Sandbox}}&contentmodel=wikitext&generator=random&prop=revisions&origin=*&rvprop=content&format=json')
+        fetch('https://en.wikipedia.org/w/api.php?action=query&generator=random&prop=revisions&origin=*&rvprop=content&format=json')
             .then(response => response.json())
             .then(json => {
-                console.log(json.query)
+                // console.log(json)
+                // console.log(json.parse.text)
+                // const newtest = json.parse.text
+                // console.log(newtest['*'])
+
+
+
+
+
+
+
+
+
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
