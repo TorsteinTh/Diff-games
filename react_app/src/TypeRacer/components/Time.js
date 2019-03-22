@@ -17,10 +17,12 @@ class Time extends Component {
     countDown() {
         if (this.state.seconds === 0) {
             this.props.timer_finished()
+            // this.stopCountDown()
+        }else{
+            this.setState({
+                seconds: this.state.seconds - 1,
+            });
         }
-        this.setState({
-            seconds: this.state.seconds - 1,
-        });
     }
 
     stopCountDown = () => {

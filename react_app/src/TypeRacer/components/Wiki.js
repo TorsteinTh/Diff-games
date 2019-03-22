@@ -41,7 +41,8 @@ export default class Wiki extends Component {
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
-                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|[[<>{}[]/g, '')
+                // const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|[[<>{}[]/g, '')
+                const content = rawContent.replace(/[^a-zA-Z0-9\w\s]/gi, '')
                 const content1 = content.split("\n")  // /\s+/g)
                 console.log(rawContent)
                 console.log(content)
