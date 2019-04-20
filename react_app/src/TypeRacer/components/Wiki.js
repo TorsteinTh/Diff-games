@@ -30,42 +30,31 @@ export default class Wiki extends Component {
                 // const newtest = json.parse.text
                 // console.log(newtest['*'])
 
-
-
-
-
-
-
-
-
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
                 const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|[[<>{}[]/g, '')
-                const content1 = content.split("\n")  // /\s+/g)
-                console.log(rawContent)
-                console.log(content)
-                console.log(content1)
+                const contentline = content.split("\n")  // /\s+/g)
+
+                var longestIDX = 0;
+                var tmplength = 0;
+                // Finds the longest string of words per newline
+                for (var i = 0; i < contentline.length; i++) {
+                    if (contentline[i].length > tmplength) {
+                        tmplength = contentline[i].length;
+                        longestIDX = i;
+                    }
+                }
+                const content1 = contentline[longestIDX].split(" ")
                 if (content1.length < 10) {
                     this.renderRandom()
+                    return
                 }
-                var i = 5
-                while (content1[i] === "" || content1[i].length < 10) {
-                    if (content1[i] === undefined || i > 1000) {
-                        this.renderRandom()
-                        return
-                    }
-                    i++
-                }
-                this.wiki = content1[i]
-
-                console.log(this.wiki)
+                const content2 = content1.filter(e => e !== "");
                 this.setState({
-                    remainingWords: content1[i].split(' '),
+                    remainingWords: content2
 
                 })
-                console.log(this.state.remainingWords)
-
                 this.props.set_content(this.state.remainingWords)
             })
             .catch(err => {
