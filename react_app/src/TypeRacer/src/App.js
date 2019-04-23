@@ -4,6 +4,7 @@ import { Button, FormGroup, FormControl, ControlLabel } from "react-bootstrap";
 import Won from "./../components/Won.js";
 import RenderText from "./../components/RenderText.js";
 import Time from "./../components/Time.js";
+import Timer from "./../components/Timer.js";
 import Wiki from "./../components/Wiki.js";
 
 
@@ -16,7 +17,8 @@ class TypeRacer extends Component {
             timer_finished: false,
             typedWords: '',
             remainingWords: [],
-            finishedWords: []
+            finishedWords: [],
+            time_used: 0
         };
     }
     totalTime = 0
@@ -55,6 +57,10 @@ class TypeRacer extends Component {
         })
     }
 
+    time_used = time => {
+        this.setState({ time_used: time })
+    }
+
 
 
 
@@ -87,6 +93,7 @@ class TypeRacer extends Component {
                                     value={this.state.typedwords}
                                     autoFocus
                                 />
+                                <Timer time_used={this.time_used}></Timer>
                             </FormGroup>)
                             :
                             (
@@ -95,7 +102,10 @@ class TypeRacer extends Component {
                         }
                     </GameHolder>)}
                 {this.state.finished && (
-                    <Won></Won>
+                    <div>
+                        <Won></Won>
+                        <h>You used: {this.state.time_used} seconds</h>
+                    </div>
                 )}
             </GameScreen >
         );
