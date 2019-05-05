@@ -122,12 +122,13 @@ export default class Wiki extends Component {
 
     render() {
         return (
-            <div>
+            <div style={{ alignContent: "center" }}>
                 <p> Is there somethong you want to write about:</p>
                 <form onSubmit={this.handleSubmit}>
                     <input
                         onChange={this.handleChange}
                         value={this.state.wantedContent}
+                        placeholder="Doesn't work"
                         autoFocus />
                 </form>
             </div>

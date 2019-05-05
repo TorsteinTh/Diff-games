@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "antd": "^3.16.6",
     "bootstrap": "^3.4.1",
     "json": "^9.0.6",
     "loadjson": "^1.1.2",

@@ -48,7 +48,7 @@ class TypeRacer extends Component {
     }
 
     set_content = e => {
-        this.setState({ remainingWords: e })
+        this.setState({ remainingWords: ["Hei", "alle", "sammen", "no", "snakker", "vi"] })
     }
 
     timer_finished = () => {
@@ -68,14 +68,15 @@ class TypeRacer extends Component {
         return (
             <GameScreen>
                 {!this.state.started && (
-                    <div>
+                    <StartPage>
                         <Button bsStyle="success" onClick={this.handleButtonClick}>Start Typeracer</Button>
+                        <hr />
                         <Wiki
                             set_content={this.set_content}
                             want_to_start={this.handleButtonClick}
                             {...this.state}>
                         </Wiki>
-                    </div>
+                    </StartPage>
                 )}
                 {this.state.started && !this.state.finished && (
                     <GameHolder>
@@ -93,7 +94,9 @@ class TypeRacer extends Component {
                                     value={this.state.typedwords}
                                     autoFocus
                                 />
-                                <Timer time_used={this.time_used}></Timer>
+                                <div style={{ margin: "15px 0 0 0" }}>
+                                    <Timer time_used={this.time_used}></Timer>
+                                </div>
                             </FormGroup>)
                             :
                             (
@@ -103,8 +106,10 @@ class TypeRacer extends Component {
                     </GameHolder>)}
                 {this.state.finished && (
                     <div>
-                        <Won></Won>
-                        <h>You used: {this.state.time_used} seconds</h>
+                        <Won
+                            time_used={this.state.time_used}
+                            total_words={this.state.finishedWords.length}
+                        />
                     </div>
                 )}
             </GameScreen >
@@ -112,6 +117,13 @@ class TypeRacer extends Component {
     }
 }
 export default TypeRacer;
+
+const StartPage = styled.div`
+    height: 100%;
+    width: 100%;
+    display: grid;
+    justify-content: center;
+`;
 
 const GameScreen = styled.div`
     height: 100%;

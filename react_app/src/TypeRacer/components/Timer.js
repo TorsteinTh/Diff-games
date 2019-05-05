@@ -1,4 +1,5 @@
-import React, { Component } from "react"
+import React, { Component } from "react";
+import { Icon } from "antd";
 
 
 
@@ -29,9 +30,8 @@ class Timer extends Component {
     render() {
         return (
             <div>
-                <h1>
-                    Your time: {this.state.seconds}
-                </h1>
+                <Icon type="clock-circle" theme="filled" />
+                : {this.state.seconds} sec
             </div>
         );
     }
