@@ -9,7 +9,7 @@ class Won extends Component {
     }
 
     render() {
-        const WPM = this.props.total_words / this.props.time_used
+        var WPM = (this.props.total_words / this.props.time_used * 60).toFixed(3)
         return (
             <div>
                 <MainContainer>
@@ -17,7 +17,7 @@ class Won extends Component {
                         YOU FINISHED !!
                     </h1>
                     <hr></hr>
-                    <h4>WPM: {WPM} seconds</h4>
+                    <h4>WPM: {WPM} </h4>
                     <h4>You used: {this.props.time_used} seconds</h4>
                     <h4>Total words: {this.props.total_words} words</h4>
                 </MainContainer >

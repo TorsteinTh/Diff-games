@@ -48,7 +48,7 @@ class TypeRacer extends Component {
     }
 
     set_content = e => {
-        this.setState({ remainingWords: ["Hei", "alle", "sammen", "no", "snakker", "vi"] })
+        this.setState({ remainingWords: e })
     }
 
     timer_finished = () => {
@@ -105,11 +105,13 @@ class TypeRacer extends Component {
                         }
                     </GameHolder>)}
                 {this.state.finished && (
-                    <div>
+                    <div style={{ alignContent: "center", display: "grid" }}>
                         <Won
                             time_used={this.state.time_used}
                             total_words={this.state.finishedWords.length}
                         />
+                        <Button bsStyle="success" href="/game_2">Play again?</Button>
+
                     </div>
                 )}
             </GameScreen >

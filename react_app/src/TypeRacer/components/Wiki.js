@@ -33,8 +33,10 @@ export default class Wiki extends Component {
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
-                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|[[<>{}[]/g, '')
-                const contentline = content.split("\n")  // /\s+/g)
+                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?|<>{}]/g, '')
+                // const content = rawContent.replace(/[^a-zA-Z0-9]/g, '_')
+                const content123 = content.replace(/[0-9]/g, '')
+                const contentline = content123.split("\n")  // /\s+/g)
 
                 var longestIDX = 0;
                 var tmplength = 0;
@@ -82,7 +84,7 @@ export default class Wiki extends Component {
                 const page = json.query.pages
                 const pageId = Object.keys(page)[0]
                 const rawContent = page[pageId].revisions[0]['*']
-                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]/g, '')
+                const content = rawContent.replace(/[&\\/\\#+()$~%'":*?[[<>{}[]]]/g, '')
                 const content1 = content.split("\n")  // /\s+/g)
                 console.log(rawContent)
                 console.log(content)
