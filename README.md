@@ -1,7 +1,11 @@
 # Different games
 
 ## Typeracer
-Typeracer build with react
+Typeracer build with react.
+
+Collects random text from the open wikipedia API.
+
+Creates an text to be written and tested through a typeracer game.
 
 
 ### Start
